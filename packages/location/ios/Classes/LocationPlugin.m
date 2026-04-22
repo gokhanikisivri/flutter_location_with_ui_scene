@@ -205,6 +205,15 @@
                                                           style:UIAlertActionStyleCancel
                                                         handler:nil]];
 
+      [alertController addAction:[UIAlertAction actionWithTitle:@"Settings"
+                                                          style:UIAlertActionStyleDefault
+                                                        handler:^(UIAlertAction * _Nonnull action) {
+          NSURL *settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+          if ([[UIApplication sharedApplication] canOpenURL:settingsUrl]) {
+              [[UIApplication sharedApplication] openURL:settingsUrl options:@{} completionHandler:nil];
+          }
+      }]];
+
       UIViewController *rootViewController = nil;
       if (@available(iOS 13.0, *)) {
         for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
