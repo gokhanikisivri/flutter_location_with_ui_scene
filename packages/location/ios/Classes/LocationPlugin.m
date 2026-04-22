@@ -195,14 +195,48 @@
                       }
                     }];
 #else
-      UIAlertView *alert = [[UIAlertView alloc]
-              initWithTitle:@"Location is Disabled"
-                    message:@"To use location, go to your Settings App > "
-                            @"Privacy > Location Services."
-                   delegate:self
-          cancelButtonTitle:@"Cancel"
-          otherButtonTitles:nil];
-      [alert show];
+      UIAlertController *alertController = [UIAlertController
+          alertControllerWithTitle:@"Location is Disabled"
+                           message:@"To use location, go to your Settings App > "
+                                   @"Privacy > Location Services."
+                    preferredStyle:UIAlertControllerStyleAlert];
+
+      [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel"
+                                                          style:UIAlertActionStyleCancel
+                                                        handler:nil]];
+
+      UIViewController *rootViewController = nil;
+      if (@available(iOS 13.0, *)) {
+        for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+          if (scene.activationState == UISceneActivationStateForegroundActive &&
+              [scene isKindOfClass:[UIWindowScene class]]) {
+            UIWindowScene *windowScene = (UIWindowScene *)scene;
+            for (UIWindow *window in windowScene.windows) {
+              if (window.isKeyWindow) {
+                rootViewController = window.rootViewController;
+                break;
+              }
+            }
+            if (!rootViewController) {
+              rootViewController = windowScene.windows.firstObject.rootViewController;
+            }
+            if (rootViewController) {
+              break;
+            }
+          }
+        }
+      }
+
+      if (!rootViewController) {
+        rootViewController =
+            UIApplication.sharedApplication.delegate.window.rootViewController;
+      }
+
+      if (rootViewController) {
+        [rootViewController presentViewController:alertController
+                                         animated:YES
+                                       completion:nil];
+      }
 #endif
       result(@0);
     }
